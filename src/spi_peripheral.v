@@ -30,7 +30,7 @@ module spi_peripheral (
         end 
         
         else begin
-            nCS_sync1 <= nCS;
+            nCS_sync1 <= ncs;
             nCS_sync2 <= nCS_sync1;
             SCLK_sync1 <= sclk;
             SCLK_sync2 <= SCLK_sync1;
