@@ -18,13 +18,32 @@ module tt_um_uwasic_onboarding_nam_tran (
 
   // Add this inside the module block
   assign uio_oe = 8'hFF; // Set all IOs to output
-  
-  // Create wires to refer to the values of the registers
+
+  // Assign SPI signals from input pins
+  wire sclk = ui_in[0];
+  wire ncs  = ui_in[1];
+  wire copi = ui_in[2];
+
+  // SPI-controlled register outputs
   wire [7:0] en_reg_out_7_0;
   wire [7:0] en_reg_out_15_8;
   wire [7:0] en_reg_pwm_7_0;
   wire [7:0] en_reg_pwm_15_8;
   wire [7:0] pwm_duty_cycle;
+
+  // SPI Peripheral Instance
+  spi_peripheral spi_peripheral_ins (
+    .clk(clk),
+    .rst_n(rst_n),
+    .sclk(sclk),
+    .ncs(ncs),
+    .copi(copi),
+    .en_reg_out_7_0(en_reg_out_7_0),
+    .en_reg_out_15_8(en_reg_out_15_8),
+    .en_reg_pwm_7_0(en_reg_pwm_7_0),
+    .en_reg_pwm_15_8(en_reg_pwm_15_8),
+    .pwm_duty_cycle(pwm_duty_cycle)
+  );
 
   // Instantiate the PWM module
   pwm_peripheral pwm_peripheral_inst (
