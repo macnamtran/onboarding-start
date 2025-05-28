@@ -32,8 +32,11 @@ module pwm_peripheral (
                 pwm_counter <= pwm_counter + 1;
                 clk_counter <= 0;
             end
+
+            // Update outputs based on enable registers and PWM
             out[7:0] <= en_reg_out_7_0;
             out[15:8] <= en_reg_out_15_8;
+
             // Apply PWM to each bit individually if enabled
             // Lower 8 bits
             if (en_reg_pwm_7_0[0]) out[0] <= (pwm_signal) ? en_reg_out_7_0[0] : 1'b0;
