@@ -66,6 +66,11 @@ module spi_peripheral (
         if (!rst_n) begin
             bit_counter <= 5'b0;
             shift_reg <= 16'b0;
+            en_reg_out_7_0   <= 8'b0;
+            en_reg_out_15_8  <= 8'b0;
+            en_reg_pwm_7_0   <= 8'b0;
+            en_reg_pwm_15_8  <= 8'b0;
+            pwm_duty_cycle   <= 8'b0;
         end else if (!nCS_sync2) begin //Transaction is active
             if (sclk_rising_edge) begin
                 shift_reg <= {shift_reg[14:0], COPI_sync2}; // Shift in the new bit
