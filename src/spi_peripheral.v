@@ -75,21 +75,21 @@ module spi_peripheral (
             if (sclk_rising_edge) begin
                 shift_reg <= {shift_reg[14:0], COPI_sync2}; // Shift in the new bit
                 bit_counter <= bit_counter + 1;
-            end
-        end else if (ncs_rising_edge) begin //Transaction is complete
-            if (bit_counter == 16) begin // process the received data
-                if (shift_reg[15]) begin //Write
-                    case (shift_reg[14:8])
-                        7'h00: en_reg_out_7_0   <= shift_reg[7:0];
-                        7'h01: en_reg_out_15_8  <= shift_reg[7:0];
-                        7'h02: en_reg_pwm_7_0   <= shift_reg[7:0];
-                        7'h03: en_reg_pwm_15_8  <= shift_reg[7:0];
-                        7'h04: pwm_duty_cycle   <= shift_reg[7:0];
-                        default: ; // ignore invalid addresses
-                    endcase
+                if (bit_counter == 15) begin
+                    if (shift_reg[15]) begin
+                        case (shift_reg[14:8])
+                            7'h00: en_reg_out_7_0   <= {shift_reg[6:0], COPI_sync2};
+                            7'h01: en_reg_out_15_8  <= {shift_reg[6:0], COPI_sync2};
+                            7'h02: en_reg_pwm_7_0   <= {shift_reg[6:0], COPI_sync2};
+                            7'h03: en_reg_pwm_15_8  <= {shift_reg[6:0], COPI_sync2};
+                            7'h04: pwm_duty_cycle   <= {shift_reg[6:0], COPI_sync2};
+                            default: ;
+                        endcase
+                    end
                 end
             end
-            //Reset the bit counter and shift register
+        end else begin
+            // Reset the bit counter and shift register when nCS goes high
             bit_counter <= 5'b0;
             shift_reg <= 16'b0;
         end
