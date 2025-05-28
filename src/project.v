@@ -32,7 +32,7 @@ module tt_um_uwasic_onboarding_nam_tran (
   wire [7:0] pwm_duty_cycle;
 
   // SPI Peripheral Instance
-  spi_peripheral spi_peripheral_ins (
+  spi_peripheral spi_peripheral_ins(
     .clk(clk),
     .rst_n(rst_n),
     .sclk(sclk),
@@ -54,12 +54,11 @@ module tt_um_uwasic_onboarding_nam_tran (
     .en_reg_pwm_7_0(en_reg_pwm_7_0),
     .en_reg_pwm_15_8(en_reg_pwm_15_8),
     .pwm_duty_cycle(pwm_duty_cycle),
-    //.out({uio_out, uo_out})
+    .out(uio_out)
   );
 
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, clk, rst_n, ui_in[7:3], uio_in, 1'b0};
   assign uo_out = en_reg_out_7_0;
-
 
 endmodule
