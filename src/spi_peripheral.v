@@ -62,8 +62,10 @@ module spi_peripheral (
     //Shift register logic
     reg [4:0] bit_counter;
     reg [15:0] shift_reg;
+    reg transaction_done;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            transaction_done <= 1'b0;
             bit_counter <= 5'b0;
             shift_reg <= 16'b0;
             en_reg_out_7_0   <= 8'b0;
@@ -71,14 +73,22 @@ module spi_peripheral (
             en_reg_pwm_7_0   <= 8'b0;
             en_reg_pwm_15_8  <= 8'b0;
             pwm_duty_cycle   <= 8'b0;
-        end else if (!nCS_sync2) begin //Transaction is active
-            if (sclk_rising_edge && bit_counter < 16) begin
-                shift_reg <= {shift_reg[14:0], COPI_sync2}; // Shift in the new bit
+        end else begin
+            if (ncs_falling_edge) begin
+                // Start of transaction
+                transaction_done <= 1'b0;
+                bit_counter <= 0;
+                shift_reg <= 0;
+            end else if (!nCS_sync2 && sclk_rising_edge && bit_counter < 16) begin
+                // During transaction
+                shift_reg <= {shift_reg[14:0], COPI_sync2};
                 bit_counter <= bit_counter + 1;
-            end
-        end else if (ncs_rising_edge) begin //Transaction is complete
-            if (bit_counter == 16) begin // process the received data
-                if (shift_reg[15]) begin //Write
+
+                if (bit_counter == 15)
+                    transaction_done <= 1'b1;
+            end else if (ncs_rising_edge && transaction_done) begin
+                // End of transaction, write if it's a write command
+                if (shift_reg[15]) begin
                     case (shift_reg[14:8])
                         7'h00: en_reg_out_7_0   <= shift_reg[7:0];
                         7'h01: en_reg_out_15_8  <= shift_reg[7:0];
@@ -88,10 +98,8 @@ module spi_peripheral (
                         default: ; // ignore invalid addresses
                     endcase
                 end
+                transaction_done <= 1'b0;
             end
-            //Reset the bit counter and shift register
-            bit_counter <= 5'b0;
-            shift_reg <= 16'b0;
         end
     end
 endmodule
