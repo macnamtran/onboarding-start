@@ -21,8 +21,8 @@ module tt_um_uwasic_onboarding_nam_tran (
 
   // Assign SPI signals from input pins
   wire sclk = ui_in[0];
-    wire ncs  = ui_in[2];
-    wire copi = ui_in[1];
+  wire ncs  = ui_in[1];
+  wire copi = ui_in[2];
 
   // SPI-controlled register outputs
   wire [7:0] en_reg_out_7_0;

@@ -62,8 +62,8 @@ module spi_peripheral (
             shift_reg <= 16'd0;
             en_reg_out_7_0 <= 8'd0;
             en_reg_out_15_8 <= 8'd0;
-            en_reg_pwm_7_0 <= 8'd0;
-            en_reg_pwm_15_8 <= 8'd0;
+            en_reg_pwm_7_0 <= 8'd0;  // PWM disabled by default
+            en_reg_pwm_15_8 <= 8'd0; // PWM disabled by default
             pwm_duty_cycle <= 8'd0;
         end else begin
             // Start of new transaction
